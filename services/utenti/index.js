@@ -1,19 +1,49 @@
+let Database = require('./db').Database
 let express = require('express')
-let app = express()
-let port = 3000;
+let bodyParser = require('body-parser')
 
-let user_creator = require('./routes/create_users')
-app.post('/addUser', user_creator)
+async function main() {
 
-let user_deleter = require('./routes/delete_user')
-app.delete('/deleteUser/:id', user_deleter)
+    let db = new Database({
+        host: "localhost",
+        user: "root",
+        password: "rickie19",
+        database: "Mercatino-Libri"
+    })
 
-let user_updater = require('./routes/update_user')
-app.put('/updateUser/:id', user_updater)
+    await db.connect();
 
-let user_info_getter = require('./routes/get_users')
-app.get('/getUserInfo/:id', user_info_getter)
+    let app = express()
+    let port = 3000;
+    
+    app.use( bodyParser.json() );       // to support JSON-encoded bodies
+    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+      extended: true
+    }));
 
-app.listen(port, ()=>{
-    console.log('User microservice has started and is using port: ' + port + '\n')
-})
+    let user_creator = require('./routes/create_users')
+    app.post('/addUser', (req,res,next) => {
+        console.log(req.body);
+        res.json(req.body)
+    })
+
+    let user_deleter = require('./routes/delete_user')
+    app.delete('/deleteUser/:id', user_deleter)
+
+    let user_updater = require('./routes/update_user')
+    app.put('/updateUser/:id', user_updater)
+
+    app.get('/getUserInfo/:id', (req, res, next) => {
+        db.query("SELECT * FROM `Utenti` WHERE `id` = " + req.param("id")).then((result) => {
+            res.json(result)
+        })
+    })
+
+    app.listen(port, ()=>{
+        console.log('User microservice has started and is using port: ' + port + '\n')
+    })
+
+}
+
+
+main()

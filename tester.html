@@ -1,0 +1,33 @@
+<script>
+    function send() {
+        var user_obj = {
+            id : document.getElementById("id").value,
+            nome : document.getElementById("nome").value,
+            cognome : document.getElementById("cognome").value,
+            username : document.getElementById("username").value,
+            password : document.getElementById("password").value,
+            email :  document.getElementById("email").value
+        }
+        fetch("http://localhost:3000/addUser", {
+        method: 'post',
+        mode: 'no-cors',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user_obj)
+        }).then(res=>res.json())
+        .then(res => console.log(res));
+    }
+
+</script>
+
+
+id: <input type="text" id="id"> <br><br>
+nome: <input type="text" id="nome"> <br><br>
+cognome: <input type="text" id="cognome"> <br><br>
+username: <input type="text" id="username"> <br><br>
+password: <input type="text" id="password"> <br><br>
+email: <input type="text" id="email"> <br><br>
+<button onclick="send()">INVIA</button>
+
