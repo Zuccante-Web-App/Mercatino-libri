@@ -28,7 +28,7 @@ class Database {
 
 }
 
-module.exports.Database = Database;
+module.exports.Database = Database
 
 /*
 con.connect((error)=> {

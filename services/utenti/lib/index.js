@@ -1,4 +1,5 @@
 let Database = require('./db').Database
+let UserManager = require('./user_manager').UserManager
 let express = require('express')
 let bodyParser = require('body-parser')
 
@@ -10,7 +11,9 @@ async function main() {
         database: "Mercatino-Libri"
     })
 
-    await db.connect();
+    await db.connect()
+
+    let userManager = new UserManager(db)
 
     let app = express()
     let port = 3000;
@@ -18,12 +21,15 @@ async function main() {
     app.use( bodyParser.json() );       // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
       extended: true
-    }));
+    }))
 
     let user_creator = require('./routes/create_users')
     app.post('/addUser', (req,res,next) => {
-        console.log(req.body);
-        res.json(req.body)
+        userManager.createUser(req.body).then((err , result) => {
+            if(err)
+                res.json("Errore")
+            res.json({status : 'OK'})
+        })
     })
 
     let user_deleter = require('./routes/delete_user')
