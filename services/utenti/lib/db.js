@@ -1,6 +1,7 @@
 let mysql = require('mysql')
 
-class Database {
+
+module.exports.Database = class Database {
 
     constructor(config) {
         this.connection = mysql.createConnection(config)
@@ -27,16 +28,3 @@ class Database {
     }
 
 }
-
-module.exports.Database = Database
-
-/*
-con.connect((error)=> {
-    if(error) {
-        console.log("errore!")
-    }
-    let sql = "SELECT * FROM `Utenti`"
-    con.query(sql, (error, result) => {
-        console.log(result)
-    })
-})*/

@@ -18,29 +18,31 @@ async function main() {
     let app = express()
     let port = 3000;
     
-    app.use( bodyParser.json() );       // to support JSON-encoded bodies
-    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-      extended: true
-    }))
+    app.use( bodyParser.json());       // to support JSON-encoded bodies
+    app.use(bodyParser.urlencoded({ extended: true })) // to support URL-encoded bodies
 
-    let user_creator = require('./routes/create_users')
-    app.post('/addUser', (req,res,next) => {
-        userManager.createUser(req.body).then((err , result) => {
-            if(err)
-                res.json("Errore")
-            res.json({status : 'OK'})
+    app.post('/addUser', (req,res) => {
+        userManager.createUser(req.body).then((result, err) => {
+            console.log(result)
+            res.json(result)
         })
     })
 
-    let user_deleter = require('./routes/delete_user')
-    app.delete('/deleteUser/:id', user_deleter)
+    app.delete('/deleteUser/:id', (req, res) => {
+        userManager.deleteUser(req.params['id']).then((err, result) => {
+            res.json({status : 'OK'});
+        })
+    })
 
-    let user_updater = require('./routes/update_user')
-    app.put('/updateUser/:id', user_updater)
+    app.put('/updateUser/:id', (req, res) => {
+        userManager.updateUser(req.params['id']).then((err, result) => {
+            res.json({status : 'OK'});
+        })
+    })
 
-    app.get('/getUserInfo/:id', (req, res, next) => {
-        db.query("SELECT * FROM `Utenti` WHERE `id` = " + req.param("id")).then((result) => {
-            res.json(result)
+    app.get('/getUserInfo/:id', (req, res) => {
+        userManager.getUserInfo(req.params['id']).then((result) => {
+            res.json(result);
         })
     })
 
